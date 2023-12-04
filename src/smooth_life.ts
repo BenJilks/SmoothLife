@@ -34,8 +34,17 @@ function create_display_target(scene: Scene, texture: three.Texture): MeshBasicM
     return material
 }
 
-function random_grey() {
-    const brightness = Math.floor(Math.random() * 255)
+function mulberry32(seed: number) {
+    return () => {
+        let t = seed += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+}
+
+function random_grey(random: () => number) {
+    const brightness = Math.floor(random() * 255)
     return [brightness, brightness, brightness, 255]
 }
 
@@ -51,10 +60,13 @@ export default class SmoothLife {
     private buffer0: WebGLRenderTarget
     private buffer1: WebGLRenderTarget
 
+    private seed: number
+
     constructor(canvas: HTMLCanvasElement) {
         const scale = 0.5
         const width = Math.floor(canvas.width * scale)
         const height = Math.floor(canvas.height * scale)
+        this.seed = 312.36321854461045
 
         this.compute_scene = new three.Scene()
         this.display_scene = new three.Scene()
@@ -73,9 +85,10 @@ export default class SmoothLife {
         const height = this.buffer0.height
 
         const data = new Array(width * height).fill(0).map(() => [0, 0, 0, 255])
-        for (let y = 0; y < height/4; y++) {
-            for (let x = 0; x < width/4; x++) {
-                data[y * width + x] = random_grey()
+        const random = mulberry32(this.seed)
+        for (let y = 0; y < height/2; y++) {
+            for (let x = 0; x < width/2; x++) {
+                data[y * width + x] = random_grey(random)
             }
         }
 
@@ -85,6 +98,7 @@ export default class SmoothLife {
         this.display_material.map = state
         this.renderer.setRenderTarget(this.buffer0)
         this.renderer.render(this.display_scene, this.camera)
+        this.seed = Math.random() * 1000
     }
 
     draw_frame() {
