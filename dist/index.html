@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>SmoothLife</title>
+        <script defer src="bundle.js"></script>
+        <style>
+        body {
+            background-color: #222;
+            color: #EEE;
+        }
+
+        .content {
+            display: flex;
+            width: min-content;
+            gap: 1em;
+            margin: auto;
+            margin-top: 2em;
+        }
+
+        .panel {
+            width: 20em;
+        }
+        </style>
+    </head>
+
+    <body>
+        <div class="content">
+            <canvas id="canvas" width="1200" height="900"></canvas>
+            <div class="panel">
+                <h2>SmoothLife</h2>
+                <a href="https://arxiv.org/abs/1111.1567" target="_blank">https://arxiv.org/abs/1111.1567</a>
+                <p>An implementation of SmoothLife, generalization of Conway's "Game of Life" to a continuous domain.</p>
+
+                <button id="reset-button">Reset</button>
+            </div>
+        </div>
+    </body>
+</html>
